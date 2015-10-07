@@ -34,6 +34,9 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+        var xhr = new XMLHttpRequest();
+xhr.open("GET", "192.168.0.7/arduino/digital/13/1", false);
+xhr.send();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
