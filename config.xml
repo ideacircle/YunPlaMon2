@@ -1,7 +1,7 @@
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.ideacircle.yun" version="1.0.0">
-  <name>YunApp</name>
-  <description>Hello World sample application that responds to the deviceready event.</description>
-  <author href="http://phonegap.com" email="support@phonegap.com">PhoneGap Team</author>
+  <name>Yun Plant Monitor</name>
+  <description>Plant Monitor using Aruino Yun</description>
+  <author href="www.ideacirle.co.uk" email="kg@ideacircle.co.uk">Karthik Guruchandran</author>
   <content src="index.html"/>
   <preference name="permissions" value="none"/>
   <preference name="orientation" value="default"/>
