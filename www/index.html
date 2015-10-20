@@ -1,109 +1,180 @@
 <!DOCTYPE html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>PA Toggle 13</title>
+    <title>Plant Monitor</title>
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="buttons.css" />
-    <style>
-    body {margin:0px;font-size:large;}
-    #header {padding:0;}
-    .hidden {visibility:collapse;display:none;}
-    .expose {visibility:visible;display:block;} /* Here for completeness only. */
-    .copyright {padding:5px;align:left;font-style:italic;font-size:small;}
-    .spacer {clear:both;margin:0.5em;}
-    input {font-size:1.2em;}
-    </style>
+        
+    <link rel="stylesheet" href="../www/lib/onsen/css/onsenui.css">
+    <link rel="stylesheet" href="../www/lib/onsen/css/onsen-css-components-dark-theme.css">
+    <link rel="stylesheet" href="../www/lib/onsen/css/font_awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../www/lib/onsen/css/onsen-css-components.css">
+  
+    <link rel="stylesheet" href="range.css">
+
     <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/fastclick.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/zepto-1.1.6.js"></script>
+    <script src="./lib/onsen/js/angular/angular.js"></script>
+    <script src="./lib/onsen/js/onsenui.js"></script>
+    <script src="jquery.min.js"></script>
+    <script src="./js/rangeslider.min.js"></script>
     <script type="text/javascript">
         // Global Variables
-        var defaultHostIP = "192.168.240.1";
+        var defaultHostIP = "192.168.0.7";
         var hostIP        = "";
         var targetURL     = "";
         var ledState      = 0;
         var ledIntermediateState = "";
+        var str;
+        var res;
+        var REST_return;
     </script>
+    <script>ons.bootstrap();</script>
 </head>
 <body onload="onLoad()">
-<div id=header class="button button-block button-large" >
-    <img align=left src=favicon-48x48.png>
-    PA Toggle 13
-    <button id=exitApp onclick='navigator.app.exitApp()' class="button button-pill button-primary button-large" style="margin:0.1em;float:right;">Exit</button>
-</div>
+     
 <center>
-    <p class=spacer />
+    <div data-role="header" data-position="fixed">
+            <h1>Plant Doctor</h1>
+    </div>
+    <input type="text" class="text-input text-input--underbar"  id=targetIP placeholder="Enter Host IP" value="">
+<button id=readAll class="button button--outline" >Read Data</button>
+    <br/>
+    <button id=populate class="button button--outline" >Populate</button>
+    <br/>
+    <br/>
 
-    <div id=content style="margin:1em;">LED #13: <span id=led13></span></div>
-    <input id=targetIP type=text /> <br />
-
-    <button id=toggle13 class="button button-pill button-action button-large">Toggle</button>
-
+      <ons-list class="range-list">
+        <ons-list-item>
+          <ons-row>
+            <ons-col width="20%">
+              <i class="fa fa-flask fa-3x"></i>
+            </ons-col>
+            <ons-col class="range-wrapper">
+              <input type="range" id="water" value="10" class="range">
+            </ons-col>
+          </ons-row>
+        </ons-list-item>
+     
+<br/>
+<br/>
+         <ons-list-item>
+          <ons-row>
+            <ons-col width="20%">
+              <i class="fa fa-sun-o fa-3x"></i>
+            </ons-col>
+            <ons-col class="range-wrapper">
+              <input type="range" id="temp" value="20" class="range">
+            </ons-col>
+          </ons-row>
+        </ons-list-item>
+<br/>
+<br/>    
+        <ons-list-item>
+          <ons-row>
+            <ons-col width="20%">
+              <i class="fa fa-tint fa-3x"></i>
+            </ons-col>
+            <ons-col class="range-wrapper">
+              <input type="range" id="humidity" value="30" class="range">
+            </ons-col>
+          </ons-row>
+        </ons-list-item>
+ 
+<br/>
+<br/> 
+            <ons-list-item>
+          <ons-row>
+            <ons-col width="20%">
+              <i class="fa fa-paw fa-3x"></i>
+            </ons-col>
+            <ons-col class="range-wrapper">
+              <input type="range" id="fertiliser" value="40" class="range">
+            </ons-col>
+          </ons-row>
+        </ons-list-item>
+        </ons-list>
+   
+    
 </center>
+ 
+
+<br/>
+<br/>   
+<br/>   
+<div ID=content>Status:<span id=led13></span></div>
+     
 <div class="copyright" style="padding:5px;align:left;font-style:italic;font-size:small;">
-    <span id=copyright>Created by Jesus Monroy, Jr. &copy; 2015</span>
+    <span id=copyright>Karthik Guruchandran &copy; 2015</span>
 </div>
 </body>
-<script type="text/javascript">
-    // NOTE: The script are down here to allow the <body> to load, 
-    //    or in the parlance "allow the DOM to load".
-    //    The reason we want this is we need to know where the "id" labels are.
-    //
-    // Get rid of 300ms delay 
+
+<script type="text/javascript">   
     document.addEventListener('DOMContentLoaded', function() {
-            FastClick.attach(document.body);
+            FastClick.attach(document.body);    // Get rid of 300ms delay 
         }, false);
-    // Wait for PhoneGap to load
-    document.addEventListener("deviceready", onDeviceReady, false);
-    //
+    
+    document.addEventListener("deviceready", onDeviceReady, false); // Wait for PhoneGap to load
+
     function onLoad() {
-        //alert("body loaded.");
-        // update the input field with a placeholder
-        $("#targetIP").attr("placeholder", defaultHostIP);
+        $("#targetIP").attr("placeholder", defaultHostIP);   //alert("body loaded."); update the input field with a placeholder
     }
-    //
+
     function onDeviceReady() {
-        //alert("device ready.");
-        // hide Exit button. They don't have one on iOS devices.
-        if (device.platform === "iOS") {
-            //alert("got iOS");
+        
+            if (device.platform === "iOS") {
             $("#exitApp").addClass("hidden");
-            /* deals with post-iOS-7 change that covers the status bar */
-            /* http://coenraets.org/blog/2013/09/phonegap-and-cordova-with-ios-7/ */
             document.body.style.marginTop = "20px";
         }
-        //
-        // This fires only when the button is pressed.
-        $("#toggle13").click(function() {
-            //alert("toggle LED #13");
-            // extract the IP the user gives us.
-            hostIP = $("#targetIP").val();
-            // if they did not give us one, use 'defaultHostIP'.
-            if (! hostIP) {
-                hostIP = defaultHostIP;
-                // Insert the IP we will use in to the form
-                $("#targetIP").val(hostIP);
-            }
-            // create our partial URL with REST API
-            targetURL = "http://" + hostIP + "/arduino/digital/13/"
-            ledIntermediateState = "error"; // if we ever see this, we have problems.
-            // toggle the state based on our last state.
-            if (ledState === 0) {
+
+    $("#readAll").click(function() {
+            hostIP = defaultHostIP;
+            targetURL = "http://" + hostIP + "/arduino/analog/2/"
+            
+            myurl= targetURL;
+            /*if (ledState === 0) {
                 ledState = 1;
-                myurl = encodeURI(targetURL + "0");
-                ledIntermediateState = "IOT set to OFF";
+                myurl = targetURL + "0"
             } else {
                 ledState = 0;
-                myurl = encodeURI(targetURL + "1");
-                ledIntermediateState = "IOT set to ON";
-            }
-            $("#led13").html(ledIntermediateState);
-            // Actually make the call to the webserver.
-            $.get(myurl, function (data) {
-                //console.log(data);
-                $("#led13").html(data);
-            });
+                myurl = targetURL + "1"
+            }*/
+          $.get(myurl, function (REST_return) {
+              $("#led13").html(REST_return);
+              str=REST_return;
+          });
+        
+        
+        
+        //alert($("#led13").valueof(data));
+        
+        
+
+            //targetURL = "http://" + hostIP + "/arduino/analog/2/"
+            //$.get(myurl, function (data) {$("#led13").html(data);});
+       
+        //alert($("#water").val());
         });
+        
+        
+    
+     $("#populate").click(function() {
+         //res = str.split(" ");
+         //alert(str);
+        document.getElementById("water").value=str; 
+         document.getElementById("temp").value=str/2; 
+         document.getElementById("humidity").value=str/3; 
+         document.getElementById("fertiliser").value=str/4; 
+     });
+    
+     }
+    function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
     }
+  }
+}
 </script>
-</html>
+
