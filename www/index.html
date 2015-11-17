@@ -11,6 +11,7 @@
   
     <link rel="stylesheet" href="range.css">
 
+    
     <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/fastclick.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/zepto-1.1.6.js"></script>
@@ -25,7 +26,7 @@
         var targetURL     = "";
         var ledState      = 0;
         var ledIntermediateState = "";
-        var str;
+        var w1, t1, h1, f1;
         var res;
         var REST_return;
     </script>
@@ -47,11 +48,11 @@
       <ons-list class="range-list">
         <ons-list-item>
           <ons-row>
-            <ons-col width="20%">
+            <ons-col width="10%">
               <i class="fa fa-flask fa-3x"></i>
             </ons-col>
             <ons-col class="range-wrapper">
-              <input type="range" id="water" value="10" class="range">
+              <input type="range" min="0" max="255" step="1" id="water" value="10" class="range">
             </ons-col>
           </ons-row>
         </ons-list-item>
@@ -60,38 +61,38 @@
 <br/>
          <ons-list-item>
           <ons-row>
-            <ons-col width="20%">
+            <ons-col width="10%">
               <i class="fa fa-sun-o fa-3x"></i>
             </ons-col>
             <ons-col class="range-wrapper">
-              <input type="range" id="temp" value="20" class="range">
+              <input type="range" min="0" max="255" step="1" id="temp" value="20" class="range">
             </ons-col>
           </ons-row>
         </ons-list-item>
 <br/>
 <br/>    
         <ons-list-item>
-          <ons-row>
-            <ons-col width="20%">
+          <tr>
+            <td width="10%">
               <i class="fa fa-tint fa-3x"></i>
-            </ons-col>
+            </td>
             <ons-col class="range-wrapper">
-              <input type="range" id="humidity" value="30" class="range">
+              <input type="range" min="0" max="255" step="1" id="humidity" value="30" class="range">
             </ons-col>
-          </ons-row>
+          </tr>
         </ons-list-item>
  
 <br/>
 <br/> 
-            <ons-list-item>
-          <ons-row>
-            <ons-col width="20%">
-              <i class="fa fa-paw fa-3x"></i>
-            </ons-col>
+        <ons-list-item>
+          <tr>
+            <td width="10%">
+              <i class="fa fa-leaf fa-3x"></i>
+            </td>
             <ons-col class="range-wrapper">
-              <input type="range" id="fertiliser" value="40" class="range">
+              <input type="range" min="0" max="255" step="1" id="fertiliser" value="40" class="range">
             </ons-col>
-          </ons-row>
+          </tr>
         </ons-list-item>
         </ons-list>
    
@@ -129,31 +130,46 @@
 
     $("#readAll").click(function() {
             hostIP = defaultHostIP;
-            targetURL = "http://" + hostIP + "/arduino/analog/2/"
             
-            myurl= targetURL;
-            /*if (ledState === 0) {
+        targetURL = "http://" + hostIP + "/arduino/analog/0"
+        myurl= targetURL;
+            if (ledState === 0) {
                 ledState = 1;
                 myurl = targetURL + "0"
             } else {
                 ledState = 0;
                 myurl = targetURL + "1"
-            }*/
-          $.get(myurl, function (REST_return) {
+            }
+        $.get(myurl, function (REST_return) {
               $("#led13").html(REST_return);
-              str=REST_return;
-          });
+              w1=REST_return;
+        });
         
+        targetURL = "http://" + hostIP + "/arduino/analog/1"
+        myurl= targetURL;
+            
+        $.get(myurl, function (REST_return) {
+              t1=REST_return;
+        });
         
+        targetURL = "http://" + hostIP + "/arduino/analog/2"
+        myurl= targetURL;
+            
+        $.get(myurl, function (REST_return) {
+              h1=REST_return;
+        });
+        
+        targetURL = "http://" + hostIP + "/arduino/analog/3"
+        myurl= targetURL;
+            
+        $.get(myurl, function (REST_return) {
+              f1=REST_return;
+        });
         
         //alert($("#led13").valueof(data));
-        
-        
-
-            //targetURL = "http://" + hostIP + "/arduino/analog/2/"
-            //$.get(myurl, function (data) {$("#led13").html(data);});
-       
         //alert($("#water").val());
+        
+        
         });
         
         
@@ -161,10 +177,14 @@
      $("#populate").click(function() {
          //res = str.split(" ");
          //alert(str);
-        document.getElementById("water").value=str; 
-         document.getElementById("temp").value=str/2; 
-         document.getElementById("humidity").value=str/3; 
-         document.getElementById("fertiliser").value=str/4; 
+         //w1=400;
+         //t1=984;
+         //h1=512;
+         //f1=56;
+         document.getElementById("water").value=w1/4; 
+         document.getElementById("temp").value=t1/4; 
+         document.getElementById("humidity").value=h1/4; 
+         document.getElementById("fertiliser").value=f1/4; 
      });
     
      }
